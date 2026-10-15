@@ -44,7 +44,9 @@
             gap: 24px;
 
             padding: 20px;
+            visibility: hidden;
         }
+        .stage.ready {visibility: visible;}
 
         .instruction {
             margin: 0;
@@ -57,7 +59,6 @@
             flex-shrink: 0;
         }
 
-        /* Touchscreen wording is the default */
         .desktop-instruction {
             display: none;
         }
@@ -316,19 +317,34 @@
                 Math.min(550, availableWidth, availableHeight * ratio) + "px";
         }
 
-        cover.addEventListener("load", fitImage);
         window.addEventListener("resize", fitImage);
 
-        if (cover.complete) fitImage();
+async function showWebsite() {
+    const images = document.querySelectorAll(".machine img");
 
-        // A tap opens the image and keeps it open.
+    try {
+        await Promise.all(
+            Array.from(images, image => image.decode())
+        );
+
+        fitImage();
+
+        document.querySelector(".stage").classList.add("ready");
+    } catch (error) {
+        console.error("Could not load the cover image:", error);
+    }
+}
+
+showWebsite();
+
+        
         machine.addEventListener("click", (event) => {
             if (!event.target.closest("button")) {
                 machine.classList.add("open");
             }
         });
 
-        // Keyboard users can also open with Enter or Space.
+   
         machine.addEventListener("keydown", (event) => {
             if (
                 event.target === machine &&
