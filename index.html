@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>The Affirmation Machine v1</title>
+    <title>The Affirmation Machine</title>
 
     <style>
         * {
@@ -12,14 +12,14 @@
         }
 
         :root {
-            /* HOW FAR EACH HALF MOVES ON HOVER */
+            /* DISTANCE EACH HALF MOVES WHEN OPENING */
             --opening: 90px;
 
-            /* HOVER ANIMATION SPEED */
-            --split-speed: 0.8s;
+            /* OPENING SPEED */
+            --split-speed: 0.4s;
 
-            /* SPEED WHEN AUDIO IS CLICKED */
-            --departure-speed: 3s;
+            /* DEPARTURE SPEED AFTER AUDIO STARTS */
+            --departure-speed: 2s;
         }
 
         body {
@@ -38,22 +38,49 @@
             overflow: hidden;
 
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
+            gap: 24px;
+
+            padding: 20px;
+        }
+
+        .instruction {
+            margin: 0;
+            text-align: center;
+
+           ##hmmmm aici nush 
+            font-family: Georgia, serif;
+            font-size: clamp(18px, 4vw, 24px);
+
+            flex-shrink: 0;
+        }
+
+        /* Touchscreen wording is the default */
+        .desktop-instruction {
+            display: none;
+        }
+
+        @media (hover: hover) and (pointer: fine) {
+            .desktop-instruction {
+                display: inline;
+            }
+
+            .touch-instruction {
+                display: none;
+            }
         }
 
         .machine {
             position: relative;
-
-            /* CHANGE THE IMAGE SIZE HERE */
-            width: min(90vw, 550px);
             flex-shrink: 0;
+
+            /* MAXIMUM IMAGE WIDTH */
+            max-width: 550px;
+            width: 100%;
         }
 
-        /*
-         * This image sets the exact container proportions.
-         * Do not add max-height or object-fit here.
-         */
         .image-size {
             display: block;
             width: 100%;
@@ -61,7 +88,6 @@
             visibility: hidden;
         }
 
-        /* Each wrapper contains exactly half of the image */
         .half {
             position: absolute;
             left: 0;
@@ -69,7 +95,6 @@
             height: 50%;
             overflow: hidden;
             z-index: 2;
-
             pointer-events: none;
 
             transition:
@@ -85,10 +110,6 @@
             bottom: 0;
         }
 
-        /*
-         * Each image is twice the height of its half-wrapper.
-         * The upper one aligns to the top; the lower to the bottom.
-         */
         .half img {
             position: absolute;
             left: 0;
@@ -123,13 +144,14 @@
 
         .message {
             margin: 0;
-            font-size: 22px;
+            font-size: 20px;
             text-align: center;
         }
 
         .buttons {
             display: flex;
-            gap: 20px;
+            justify-content: center;
+            gap: 16px;
         }
 
         button {
@@ -164,8 +186,8 @@
             opacity: 1;
         }
 
-        /* OPEN ON HOVER */
-        @media (hover: hover) {
+        /* OPEN ON HOVER FOR MOUSE USERS */
+        @media (hover: hover) and (pointer: fine) {
             .machine:hover .upper {
                 transform: translateY(calc(-1 * var(--opening)));
             }
@@ -180,7 +202,7 @@
             }
         }
 
-        /* MOVE BOTH HALVES OFFSCREEN AFTER AUDIO STARTS */
+        /* DEPARTURE AFTER AUDIO STARTS */
         .machine.playing .half {
             opacity: 0;
 
@@ -214,6 +236,13 @@
 <body>
 
     <div class="stage">
+
+        <!-- TEXT ABOVE THE IMAGE: CHANGE THESE WORDS -->
+        <p class="instruction" id="instruction">
+            <span class="desktop-instruction">Hover over to get affirmed.</span>
+            <span class="touch-instruction">Tap to get affirmed.</span>
+        </p>
+
         <main
             class="machine"
             id="machine"
@@ -221,9 +250,10 @@
             aria-label="Reveal audio choices"
         >
 
-            <!-- IMAGE PATH: keep all three paths identical -->
+            
             <img
                 class="image-size"
+                id="cover-size"
                 src="./design/cover.png"
                 alt=""
                 aria-hidden="true"
@@ -231,18 +261,19 @@
 
             <div class="content">
 
-                <!-- CHANGE YOUR MESSAGE HERE -->
-                <p class="message">Choose what you want to hear.</p>
+            
+                <p class="message">Choose your affirmation.</p>
 
                 <div class="buttons">
                     <button type="button" onclick="playAudio('audio1')">
-                        Audio 1
+                        Truth 1
                     </button>
 
                     <button type="button" onclick="playAudio('audio2')">
-                        Audio 2
+                        Truth 2
                     </button>
                 </div>
+
             </div>
 
             <div class="half upper" aria-hidden="true">
@@ -256,15 +287,56 @@
         </main>
     </div>
 
-    <!-- AUDIO FILE PATHS -->
+    
     <audio id="audio1" src="./audio1.mp3" preload="none"></audio>
     <audio id="audio2" src="./audio2.mp3" preload="none"></audio>
 
     <script>
         const machine = document.getElementById("machine");
+        const cover = document.getElementById("cover-size");
+        const instruction = document.getElementById("instruction");
 
-        machine.addEventListener("click", () => {
-            machine.classList.add("open");
+        /*
+         * Fit the whole image below the instruction,
+         * preserving the exact proportions of both halves.
+         */
+        function fitImage() {
+            if (!cover.naturalWidth || !cover.naturalHeight) return;
+
+            const stage = document.querySelector(".stage");
+            const availableHeight = Math.max(
+                1,
+                stage.clientHeight - instruction.offsetHeight - 24 - 40
+            );
+
+            const availableWidth = Math.max(1, stage.clientWidth - 40);
+            const ratio = cover.naturalWidth / cover.naturalHeight;
+
+            machine.style.width =
+                Math.min(550, availableWidth, availableHeight * ratio) + "px";
+        }
+
+        cover.addEventListener("load", fitImage);
+        window.addEventListener("resize", fitImage);
+
+        if (cover.complete) fitImage();
+
+        // A tap opens the image and keeps it open.
+        machine.addEventListener("click", (event) => {
+            if (!event.target.closest("button")) {
+                machine.classList.add("open");
+            }
+        });
+
+        // Keyboard users can also open with Enter or Space.
+        machine.addEventListener("keydown", (event) => {
+            if (
+                event.target === machine &&
+                (event.key === "Enter" || event.key === " ")
+            ) {
+                event.preventDefault();
+                machine.classList.add("open");
+            }
         });
 
         async function playAudio(id) {
@@ -278,6 +350,9 @@
             try {
                 await selected.play();
                 machine.classList.add("playing");
+
+                // Hide the instruction while keeping its layout space.
+                instruction.style.visibility = "hidden";
             } catch (error) {
                 console.error("Could not play audio:", error);
             }
