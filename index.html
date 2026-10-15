@@ -11,171 +11,262 @@
             box-sizing: border-box;
         }
 
+        :root {
+            /* HOW FAR EACH HALF MOVES ON HOVER */
+            --opening: 90px;
+
+            /* HOVER ANIMATION SPEED */
+            --split-speed: 0.8s;
+
+            /* SPEED WHEN AUDIO IS CLICKED */
+            --departure-speed: 3s;
+        }
+
         body {
             margin: 0;
-            min-height: 100svh;
-            background: #000000;
-            color: #ffffff;
+            background: #000;
+            color: #fff;
 
-            display: flex;
-            justify-content: center;
-            align-items: center;
-
-            /*
-             * CURSOR:
-             * Paths are relative to index.html.
-             * Use a small cursor image, ideally 32 × 32 pixels.
-             * 16 16 places the click point at its centre.
-             * Change the logo colour inside the SVG file.
-             */
             cursor:
                 url("./design/logo_cursor.svg") 16 16,
                 url("./design/cursor.png") 16 16,
                 auto;
         }
 
+        .stage {
+            height: 100svh;
+            overflow: hidden;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
         .machine {
             position: relative;
 
-            /* IMAGE SIZE: change these values */
+            /* CHANGE THE IMAGE SIZE HERE */
             width: min(90vw, 550px);
+            flex-shrink: 0;
         }
 
-        .cover {
+        /*
+         * This image sets the exact container proportions.
+         * Do not add max-height or object-fit here.
+         */
+        .image-size {
             display: block;
             width: 100%;
-            padding: 0;
-            border: none;
-            background: #000000;
-            cursor: inherit;
-
-            transition: opacity 0.3s ease;
+            height: auto;
+            visibility: hidden;
         }
 
-        .cover img {
+        /* Each wrapper contains exactly half of the image */
+        .half {
+            position: absolute;
+            left: 0;
+            width: 100%;
+            height: 50%;
+            overflow: hidden;
+            z-index: 2;
+
+            pointer-events: none;
+
+            transition:
+                transform var(--split-speed) ease,
+                opacity var(--split-speed) ease;
+        }
+
+        .upper {
+            top: 0;
+        }
+
+        .lower {
+            bottom: 0;
+        }
+
+        /*
+         * Each image is twice the height of its half-wrapper.
+         * The upper one aligns to the top; the lower to the bottom.
+         */
+        .half img {
+            position: absolute;
+            left: 0;
             display: block;
             width: 100%;
-            max-height: 90svh;
-            object-fit: contain;
+            height: 200%;
+        }
+
+        .upper img {
+            top: 0;
+        }
+
+        .lower img {
+            bottom: 0;
         }
 
         .content {
             position: absolute;
             inset: 0;
+            z-index: 1;
 
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            gap: 24px;
+            gap: 20px;
 
-            opacity: 0;
             visibility: hidden;
-            transition: opacity 0.3s ease;
+            opacity: 0;
+            transition: opacity 0.4s ease;
         }
 
         .message {
             margin: 0;
+            font-size: 22px;
             text-align: center;
-            font-size: 24px;
         }
 
         .buttons {
             display: flex;
-            justify-content: center;
             gap: 20px;
         }
 
-        .audio-button {
-            background: #ffffff;
-            color: #000000;
-            padding: 15px 30px;
-            font-size: 18px;
+        button {
             border: none;
+            padding: 15px 25px;
+            background: #fff;
+            color: #000;
+            font-size: 18px;
             cursor: inherit;
         }
 
-        /* Reveal with keyboard focus or a tap */
-        .machine:focus-within .cover,
-        .machine.revealed .cover {
-            opacity: 0;
-            pointer-events: none;
+        button:focus-visible,
+        .machine:focus-visible {
+            outline: 2px solid #fff;
+            outline-offset: 5px;
         }
 
-        .machine:focus-within .content,
-        .machine.revealed .content {
-            opacity: 1;
+        /* OPEN ON TAP OR KEYBOARD FOCUS */
+        .machine.open .upper,
+        .machine:focus-within .upper {
+            transform: translateY(calc(-1 * var(--opening)));
+        }
+
+        .machine.open .lower,
+        .machine:focus-within .lower {
+            transform: translateY(var(--opening));
+        }
+
+        .machine.open .content,
+        .machine:focus-within .content {
             visibility: visible;
+            opacity: 1;
         }
 
-        /* Reveal on hover for devices with a mouse */
+        /* OPEN ON HOVER */
         @media (hover: hover) {
-            .machine:hover .cover {
-                opacity: 0;
-                pointer-events: none;
+            .machine:hover .upper {
+                transform: translateY(calc(-1 * var(--opening)));
+            }
+
+            .machine:hover .lower {
+                transform: translateY(var(--opening));
             }
 
             .machine:hover .content {
-                opacity: 1;
                 visibility: visible;
+                opacity: 1;
             }
         }
 
-        button:focus-visible {
-            outline: 2px solid white;
-            outline-offset: 6px;
+        /* MOVE BOTH HALVES OFFSCREEN AFTER AUDIO STARTS */
+        .machine.playing .half {
+            opacity: 0;
+
+            transition:
+                transform var(--departure-speed) ease-in-out,
+                opacity var(--departure-speed) ease-in-out;
+        }
+
+        .machine.playing .upper {
+            transform: translateY(-110svh);
+        }
+
+        .machine.playing .lower {
+            transform: translateY(110svh);
+        }
+
+        .machine.playing .content {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            :root {
+                --split-speed: 0.01s;
+                --departure-speed: 0.01s;
+            }
         }
     </style>
 </head>
 
 <body>
 
-    <main class="machine" id="machine">
-
-        <!-- COVER IMAGE: change the path here -->
-        <button
-            class="cover"
-            type="button"
-            aria-label="Reveal the audio choices"
-            onclick="document.getElementById('machine').classList.add('revealed')"
+    <div class="stage">
+        <main
+            class="machine"
+            id="machine"
+            tabindex="0"
+            aria-label="Reveal audio choices"
         >
+
+            <!-- IMAGE PATH: keep all three paths identical -->
             <img
+                class="image-size"
                 src="./design/cover.png"
-                alt="I can see that you can see the truth"
+                alt=""
+                aria-hidden="true"
             >
-        </button>
 
-        <div class="content">
+            <div class="content">
 
-            <!-- HOVER MESSAGE: change the text here -->
-            <p class="message">Choose what you want to hear.</p>
+                <!-- CHANGE YOUR MESSAGE HERE -->
+                <p class="message">Choose what you want to hear.</p>
 
-            <div class="buttons">
-                <button
-                    class="audio-button"
-                    type="button"
-                    onclick="playAudio('audio1')"
-                >
-                    Audio 1
-                </button>
+                <div class="buttons">
+                    <button type="button" onclick="playAudio('audio1')">
+                        Audio 1
+                    </button>
 
-                <button
-                    class="audio-button"
-                    type="button"
-                    onclick="playAudio('audio2')"
-                >
-                    Audio 2
-                </button>
+                    <button type="button" onclick="playAudio('audio2')">
+                        Audio 2
+                    </button>
+                </div>
             </div>
 
-        </div>
-    </main>
+            <div class="half upper" aria-hidden="true">
+                <img src="./design/cover.png" alt="">
+            </div>
 
-    <!-- AUDIO FILES: paths relative to index.html -->
+            <div class="half lower" aria-hidden="true">
+                <img src="./design/cover.png" alt="">
+            </div>
+
+        </main>
+    </div>
+
+    <!-- AUDIO FILE PATHS -->
     <audio id="audio1" src="./audio1.mp3" preload="none"></audio>
     <audio id="audio2" src="./audio2.mp3" preload="none"></audio>
 
     <script>
+        const machine = document.getElementById("machine");
+
+        machine.addEventListener("click", () => {
+            machine.classList.add("open");
+        });
+
         async function playAudio(id) {
             const selected = document.getElementById(id);
 
@@ -186,8 +277,9 @@
 
             try {
                 await selected.play();
+                machine.classList.add("playing");
             } catch (error) {
-                console.error("Could not play the audio:", error);
+                console.error("Could not play audio:", error);
             }
         }
     </script>
