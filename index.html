@@ -19,29 +19,56 @@
         }
 
         .about {
-            position: fixed;
-            top: 24px;
-            right: 24px;
-            z-index: 5;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            color: white;
-            text-decoration: none;
-        }
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 5;
 
-        .about img {
-            width: 44px;
-            height: 44px;
-            object-fit: contain;
-            animation: float 4s ease-in-out infinite;
-        }
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 190px;
 
-        @keyframes float {
-            50% {
-                transform: translateY(-8px);
-            }
-        }
+    color: white;
+    text-decoration: none;
+
+    animation: floatAcross 35s linear infinite;
+}
+
+.about img {
+    width: 44px;
+    height: 44px;
+    object-fit: contain;
+}
+
+@keyframes floatAcross {
+    0%, 100% {
+        transform: translate(20px, 20px);
+    }
+
+    25% {
+        transform: translate(
+            calc(100vw - 210px),
+            calc(35svh - 22px)
+        );
+    }
+
+    50% {
+        transform: translate(
+            calc(50vw - 95px),
+            calc(100svh - 64px)
+        );
+    }
+
+    75% {
+        transform: translate(20px, 50svh);
+    }
+}
+
+.about:hover,
+.about:focus-within {
+    animation-play-state: paused;
+}
 
         .stage {
             height: 100svh;
@@ -190,15 +217,17 @@
         }
 
         @media (prefers-reduced-motion: reduce) {
-            .about img {
-                animation: none;
-            }
+    .about {
+        animation: none;
+        top: 20px;
+        left: 20px;
+    }
 
-            .half,
-            .machine.playing .half {
-                transition: none;
-            }
-        }
+    .half,
+    .machine.playing .half {
+        transition: none;
+    }
+}
     </style>
 </head>
 
