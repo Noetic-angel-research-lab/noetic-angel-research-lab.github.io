@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>The Affirmation Machine</title>
 
     <style>
@@ -11,81 +10,75 @@
             box-sizing: border-box;
         }
 
-        :root {
-            /* DISTANCE EACH HALF MOVES WHEN OPENING */
-            --opening: 90px;
-
-            /* OPENING SPEED */
-            --split-speed: 0.4s;
-
-            /* DEPARTURE SPEED AFTER AUDIO STARTS */
-            --departure-speed: 2s;
-        }
-
         body {
             margin: 0;
-            background: #000;
-            color: #fff;
+            background: black;
+            color: white;
+            font-family: Georgia, serif;
+            cursor: url("./design/cursor.png") 16 16, auto;
+        }
 
-            cursor:
-                url("./design/logo_cursor.svg") 16 16,
-                url("./design/cursor.png") 16 16,
-                auto;
+        .about {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            z-index: 5;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: white;
+            text-decoration: none;
+        }
+
+        .about img {
+            width: 44px;
+            height: 44px;
+            object-fit: contain;
+            animation: float 4s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            50% {
+                transform: translateY(-8px);
+            }
         }
 
         .stage {
             height: 100svh;
+            padding: 100px 20px 40px;
             overflow: hidden;
-
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             gap: 24px;
-
-            padding: 20px;
             visibility: hidden;
         }
-        .stage.ready {visibility: visible;}
+
+        .stage.ready {
+            visibility: visible;
+        }
 
         .instruction {
             margin: 0;
+            font-size: 22px;
             text-align: center;
-
-           ##hmmmm aici nush 
-            font-family: Georgia, serif;
-            font-size: clamp(18px, 4vw, 24px);
-
-            flex-shrink: 0;
         }
 
-        .desktop-instruction {
+        .desktop {
             display: none;
-        }
-
-        @media (hover: hover) and (pointer: fine) {
-            .desktop-instruction {
-                display: inline;
-            }
-
-            .touch-instruction {
-                display: none;
-            }
         }
 
         .machine {
             position: relative;
             flex-shrink: 0;
-
-            /* MAXIMUM IMAGE WIDTH */
-            max-width: 550px;
             width: 100%;
+            max-width: 550px;
         }
 
-        .image-size {
+        .size {
             display: block;
             width: 100%;
-            height: auto;
             visibility: hidden;
         }
 
@@ -95,12 +88,9 @@
             width: 100%;
             height: 50%;
             overflow: hidden;
-            z-index: 2;
             pointer-events: none;
-
-            transition:
-                transform var(--split-speed) ease,
-                opacity var(--split-speed) ease;
+            z-index: 2;
+            transition: transform 0.4s, opacity 0.4s;
         }
 
         .upper {
@@ -114,7 +104,6 @@
         .half img {
             position: absolute;
             left: 0;
-            display: block;
             width: 100%;
             height: 200%;
         }
@@ -127,89 +116,65 @@
             bottom: 0;
         }
 
-        .content {
+        .choices {
             position: absolute;
             inset: 0;
-            z-index: 1;
-
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
-            gap: 20px;
-
-            visibility: hidden;
-            opacity: 0;
-            transition: opacity 0.4s ease;
-        }
-
-        .message {
-            margin: 0;
-            font-size: 20px;
-            text-align: center;
-        }
-
-        .buttons {
-            display: flex;
-            justify-content: center;
             gap: 16px;
+            visibility: hidden;
         }
 
         button {
             border: none;
-            padding: 15px 25px;
-            background: #fff;
-            color: #000;
-            font-size: 18px;
+            padding: 15px 20px;
+            background: white;
+            color: black;
+            font: inherit;
             cursor: inherit;
         }
 
-        button:focus-visible,
-        .machine:focus-visible {
-            outline: 2px solid #fff;
-            outline-offset: 5px;
-        }
-
-        /* OPEN ON TAP OR KEYBOARD FOCUS */
         .machine.open .upper,
         .machine:focus-within .upper {
-            transform: translateY(calc(-1 * var(--opening)));
+            transform: translateY(-90px);
         }
 
         .machine.open .lower,
         .machine:focus-within .lower {
-            transform: translateY(var(--opening));
+            transform: translateY(90px);
         }
 
-        .machine.open .content,
-        .machine:focus-within .content {
+        .machine.open .choices,
+        .machine:focus-within .choices {
             visibility: visible;
-            opacity: 1;
         }
 
-        /* OPEN ON HOVER FOR MOUSE USERS */
         @media (hover: hover) and (pointer: fine) {
+            .desktop {
+                display: inline;
+            }
+
+            .touch {
+                display: none;
+            }
+
             .machine:hover .upper {
-                transform: translateY(calc(-1 * var(--opening)));
+                transform: translateY(-90px);
             }
 
             .machine:hover .lower {
-                transform: translateY(var(--opening));
+                transform: translateY(90px);
             }
 
-            .machine:hover .content {
+            .machine:hover .choices {
                 visibility: visible;
-                opacity: 1;
             }
         }
 
-        /* DEPARTURE AFTER AUDIO STARTS */
         .machine.playing .half {
             opacity: 0;
-
-            transition:
-                transform var(--departure-speed) ease-in-out,
-                opacity var(--departure-speed) ease-in-out;
+            transition: transform 2s, opacity 2s;
         }
 
         .machine.playing .upper {
@@ -220,61 +185,49 @@
             transform: translateY(110svh);
         }
 
-        .machine.playing .content {
+        .machine.playing .choices {
             visibility: visible;
-            opacity: 1;
         }
 
         @media (prefers-reduced-motion: reduce) {
-            :root {
-                --split-speed: 0.01s;
-                --departure-speed: 0.01s;
+            .about img {
+                animation: none;
+            }
+
+            .half,
+            .machine.playing .half {
+                transition: none;
             }
         }
     </style>
 </head>
 
 <body>
+    <a class="about" href="./about.html">
+        <img src="./design/logo_cursor.svg" alt="">
+        <span>Get to know more</span>
+    </a>
 
-    <div class="stage">
-
-        <!-- TEXT ABOVE THE IMAGE: CHANGE THESE WORDS -->
+    <div class="stage" id="stage">
         <p class="instruction" id="instruction">
-            <span class="desktop-instruction">Hover over to get affirmed.</span>
-            <span class="touch-instruction">Tap to get affirmed.</span>
+            <span class="desktop">Hover over to get affirmed.</span>
+            <span class="touch">Tap to get affirmed.</span>
         </p>
 
-        <main
-            class="machine"
-            id="machine"
-            tabindex="0"
-            aria-label="Reveal audio choices"
-        >
+        <main class="machine" id="machine" tabindex="0"
+              aria-label="Reveal audio choices">
 
-            
-            <img
-                class="image-size"
-                id="cover-size"
-                src="./design/cover.png"
-                alt=""
-                aria-hidden="true"
-            >
+            <img class="size" id="cover"
+                 src="./design/cover.png" alt="">
 
-            <div class="content">
+            <div class="choices">
+                <button type="button" onclick="playAudio('audio1')">
+                    Truth 1
+                </button>
 
-            
-                <p class="message">Choose your affirmation.</p>
-
-                <div class="buttons">
-                    <button type="button" onclick="playAudio('audio1')">
-                        Truth 1
-                    </button>
-
-                    <button type="button" onclick="playAudio('audio2')">
-                        Truth 2
-                    </button>
-                </div>
-
+                <button type="button" onclick="playAudio('audio2')">
+                    Truth 2
+                </button>
             </div>
 
             <div class="half upper" aria-hidden="true">
@@ -284,96 +237,71 @@
             <div class="half lower" aria-hidden="true">
                 <img src="./design/cover.png" alt="">
             </div>
-
         </main>
     </div>
 
-    
     <audio id="audio1" src="./audio1.mp3" preload="none"></audio>
     <audio id="audio2" src="./audio2.mp3" preload="none"></audio>
 
     <script>
+        const stage = document.getElementById("stage");
         const machine = document.getElementById("machine");
-        const cover = document.getElementById("cover-size");
+        const cover = document.getElementById("cover");
         const instruction = document.getElementById("instruction");
 
-        /*
-         * Fit the whole image below the instruction,
-         * preserving the exact proportions of both halves.
-         */
         function fitImage() {
-            if (!cover.naturalWidth || !cover.naturalHeight) return;
-
-            const stage = document.querySelector(".stage");
-            const availableHeight = Math.max(
+            const ratio = cover.naturalWidth / cover.naturalHeight;
+            const height = Math.max(
                 1,
-                stage.clientHeight - instruction.offsetHeight - 24 - 40
+                stage.clientHeight - instruction.offsetHeight - 164
             );
 
-            const availableWidth = Math.max(1, stage.clientWidth - 40);
-            const ratio = cover.naturalWidth / cover.naturalHeight;
-
             machine.style.width =
-                Math.min(550, availableWidth, availableHeight * ratio) + "px";
+                Math.min(550, stage.clientWidth - 40, height * ratio) + "px";
         }
 
-        window.addEventListener("resize", fitImage);
+        async function showWebsite() {
+            try {
+                await Promise.all(
+                    Array.from(
+                        machine.querySelectorAll("img"),
+                        image => image.decode()
+                    )
+                );
 
-async function showWebsite() {
-    const images = document.querySelectorAll(".machine img");
-
-    try {
-        await Promise.all(
-            Array.from(images, image => image.decode())
-        );
-
-        fitImage();
-
-        document.querySelector(".stage").classList.add("ready");
-    } catch (error) {
-        console.error("Could not load the cover image:", error);
-    }
-}
-
-showWebsite();
-
-        
-        machine.addEventListener("click", (event) => {
-            if (!event.target.closest("button")) {
-                machine.classList.add("open");
+                fitImage();
+                stage.classList.add("ready");
+            } catch {
+                instruction.textContent = "The cover image could not load.";
+                stage.classList.add("ready");
             }
-        });
+        }
 
-   
-        machine.addEventListener("keydown", (event) => {
-            if (
-                event.target === machine &&
-                (event.key === "Enter" || event.key === " ")
-            ) {
-                event.preventDefault();
-                machine.classList.add("open");
-            }
+        machine.addEventListener("click", () => {
+            machine.classList.add("open");
         });
 
         async function playAudio(id) {
-            const selected = document.getElementById(id);
-
             document.querySelectorAll("audio").forEach(audio => {
                 audio.pause();
                 audio.currentTime = 0;
             });
 
             try {
-                await selected.play();
+                await document.getElementById(id).play();
                 machine.classList.add("playing");
-
-                // Hide the instruction while keeping its layout space.
                 instruction.style.visibility = "hidden";
-            } catch (error) {
-                console.error("Could not play audio:", error);
+            } catch {
+                instruction.textContent = "The audio could not play.";
+                instruction.style.visibility = "visible";
             }
         }
-    </script>
 
+        window.addEventListener("resize", () => {
+            if (cover.naturalWidth) fitImage();
+        });
+
+        showWebsite();
+    </script>
 </body>
 </html>
