@@ -3,38 +3,91 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> About the Affirmation Machine</title>
+    <title>About the Affirmation Machine</title>
 
     <style>
+        * {
+            box-sizing: border-box;
+        }
+
         body {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: auto;
             padding: 30px 24px;
-            background: black;
-            color: white;
-            font-family: Droid, serif;
-            font-size: 10px;
-            line-height: 1.7;
+            background: #876a03;
+            color: #850320;
+            font-family: "Neue Haas Grotesk", serif;
+            font-size: 13px;
+            line-height: 1.3;
+
+            text-align: left;
         }
 
         a {
-            color: white;
+            color: #850320;
         }
+        p {
+    line-height: 1.1;
+    margin: 0 0 5px;
+}       
+        .description {
+            margin-top: autopx;
+            font-size: 11px;
+        }
+        .team-columns {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 24px 24px;
+    margin-top: 24px;
+}
+
+.team-columns .team-name {
+    margin: 0 0 12px;
+}
+
+.team-columns p {
+    margin: 0;
+    line-height: 1;
+}
+
+
+@media (max-width: 700px) {
+    .team-columns {
+        grid-template-columns: 1fr;
+    }
+}
+        .columns {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 80px;
+            margin-top: 50px;
+        }
+
+        .columns > div {
+            min-width: 0;
+        }
+        .extra-space {
+    margin-bottom: 20px;
+}
 
         h1,
         h2 {
-            font-weight: normal;
-            line-height: 1.2;
+            font-weight: bold;
+            line-height: 1;
         }
 
         h1 {
-            margin-top: 50px;
-            font-size: 40px;
+            margin-top: 0;
+            font-size: 15px;
         }
 
         h2 {
             margin-top: 60px;
-            font-size: 28px;
+            font-size: 13px;
+        }
+
+        .pictures h2 {
+            margin-top: 0;
         }
 
         img {
@@ -43,73 +96,396 @@
             height: auto;
             margin: 24px 0;
         }
-    </style>
+
+        @media (max-width: 700px) {
+            .columns {
+                grid-template-columns: 1fr;
+            }
+        }
+        .materials-columns {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 24px;
+    margin-top: 24px;
+}
+
+.materials-columns p {
+    margin: 0 0 16px;
+    line-height: 1;
+}
+
+@media (max-width: 700px) {
+    .materials-columns {
+        grid-template-columns: 1fr;
+    }
+}
+        .experience-columns {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 24px;
+    margin-top: 24px;
+}
+
+.experience-columns p {
+    margin: 0;
+    line-height: 1;
+}
+
+@media (max-width: 600px) {
+    .experience-columns {
+        grid-template-columns: 1fr;
+    }
+}
+.team-dropdowns {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+}
+
+.team-dropdowns summary {
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 11px;
+}
+
+.team-dropdowns details > p {
+    margin: 12px 0 0;
+    line-height: 1;
+}
+    
+
+.gallery-link {position:fixed;top:0;left:0;z-index:10;display:flex;align-items:center;gap:10px;width:140px;color:inherit;text-decoration:none;animation:galleryFloat 35s linear infinite}
+.gallery-link img {width:44px;height:44px;margin:0;object-fit:contain}
+.gallery-link:hover,.gallery-link:focus {animation-play-state:paused}
+@keyframes galleryFloat {0%,100%{transform:translate(calc(100vw - 160px),20px)}33%{transform:translate(20px,65vh)}66%{transform:translate(calc(100vw - 160px),80vh)}}
+@media(prefers-reduced-motion:reduce){.gallery-link{animation:none;left:auto;right:20px;top:20px}}
+
+body {position:relative;isolation:isolate}
+.background-phrases {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    z-index: -1;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    gap: 2px;
+    padding: 40px 20px;
+
+    pointer-events: none;
+    overflow: hidden;
+}
+.background-phrases span {font-size:550px;text-align:center;line-height:1.6;opacity:.03;transition:opacity 1s}
+.background-phrases.fading span {opacity:0}
+@media(max-width:10000px){.background-phrases{width:100%}}
+@media(prefers-reduced-motion:reduce){.background-phrases span{transition:none}}
+
+
+.about, .gallery-link, .policy-link, .contact-link {
+    position:fixed; top:0; left:0; z-index:10;
+    display:flex; align-items:center; gap:6px;
+    width:130px; min-height:32px; padding:4px;
+    font-size:11px; line-height:1.2; color:inherit; text-decoration:none;
+    animation:smallFloat 42s linear infinite;
+}
+.about img, .gallery-link img, .policy-link img, .contact-link img {
+    display:block; width:18px; height:18px; margin:0; object-fit:contain;
+}
+.gallery-link {animation-delay:-10.5s}
+.policy-link {animation-delay:-21s}
+.contact-link {animation-delay:-31.5s}
+.about:hover, .gallery-link:hover, .policy-link:hover, .contact-link:hover,
+.about:focus, .gallery-link:focus, .policy-link:focus, .contact-link:focus {animation-play-state:paused}
+@keyframes smallFloat {
+    0%,100% {transform:translate(12px,12px)}
+    25% {transform:translate(calc(100vw - 150px),25svh)}
+    50% {transform:translate(calc(60vw - 80px),calc(100svh - 52px))}
+    75% {transform:translate(12px,65svh)}
+}
+@media(prefers-reduced-motion:reduce){
+    .about,.gallery-link,.policy-link,.contact-link {animation:none;transform:none;left:auto;right:12px}
+    .about{top:12px}.gallery-link{top:48px}.policy-link{top:84px}.contact-link{top:120px}
+}
+
+</style>
+    
+    
 </head>
 
 <body>
+<a class="contact-link" href="./contact.html"><img src="./design/logo_cursor_about.svg" alt=""><span>Contact</span></a>
+
+<a class="gallery-link" href="./gallery.html"><img src="./design/logo_cursor_about.svg" alt=""><span>Pictures</span></a>
+<div class="background-phrases" aria-hidden="true"></div>
     <a href="./index.html">← Back to the machine</a>
 
-    <h1>The Affirmation Machine</h1>
+    <main class="columns">
+
+        <div class="text">
+            <h1>The Affirmation Machine</h1>
+
+            <p>
+                The Affirmation Machine explores the mechanics of
+                chatbot-amplified delusional spirals, evaluates the dangers
+                of reinforcing both mainstream and divergent truths, and
+                reflects on how technologies can exploit existing
+                psychological mechanisms.
+            </p>
+
+            <p>
+                The work aims to examine narratives of control that are
+                created, influenced, or amplified by and through the use
+                of AI.
+            </p>
+
+            <p>
+                The Affirmation Machine questions your digital agency in
+                a world of AI chatbots: what forms of control are you
+                subjecting yourself to?
+            </p>
+
+            <h2>Exibitions</h2>
+
+                <p> <strong> The Affirmation Machine at Dutch Design Week [current]</strong> </p>
+
+                <p>
+                    <a href="https://ddw.nl/nl/programma/the-affirmation-machine">
+                        Part of CODE 2026: Terms of Intimacy
+                    </a>
+                </p>
+
+                <p class="extra-space">
+                    17–25 October 2026<br>
+                    Daily, 11:00–18:00<br>
+                    Gebouw SFF (Bosch), Strijp-S<br>
+                    Torenallee 49, Eindhoven<br>
+                    Free admission
+                </p>
+
+
+                <p class="extra-space">
+                    <a href="https://impakt.nl/nl/events/2026/event/makers-meet-eat-2026/">
+                        Makers Meet &amp; Eat [past]
+                    </a><br>
+                    27 September 2026<br>
+                    Hof van Cartesius, Utrecht
+                </p>
+
+                <p class="extra-space">
+                    CODE 2026 July opening [past]<br>
+                    IMPAKT, Utrecht
+                </p>
+
+                <h2>Experience</h2>
+
+<div class="experience-columns">
 
     <p>
-        <em>
-            The Affirmation Machine explores the mechanics of
-            chatbot-amplified delusional spirals, evaluates the dangers
-            of reinforcing both mainstream and divergent truths, and
-            reflects on how technologies can exploit existing
-            psychological mechanisms.
-        </em>
+        This two person audio-installation is designed for two users to
+        enter a relaxing meditative experience together. They are instructed
+        to lie down, and personalize their audio experience by being scanned via a camera. The camera is only an illusion,
+        not functional but only for creating a feeling of being watched.
     </p>
 
     <p>
-        <em>
-            The work aims to examine narratives of control that are
-            created, influenced, or amplified by and through the use
-            of AI.
-        </em>
+        After both participants press a button, the start to
+        hear a comforting voice that gives meditation-like instructions
+        for approximately 7 minutes. Participants
+        are mostly lying down relaxed, until close to the end of the audio, when they
+        are instructed to look at each other and nod to answer a question.
     </p>
 
     <p>
-        <em>
-            The Affirmation Machine questions your digital agency in
-            a world of AI chatbots—what forms of control are you
-            subjecting yourself to?
-        </em>
+        This creates space for them to interact, as upon exiting
+        the installation, they are instructed to take a question card
+        and discuss their experienc. The goal of the card is to spark conversation about dependence
+        use, and consequences of AI chatbots use and the systems of control that surround AI.
     </p>
 
-    <h2>The physical work</h2>
+</div>
+          
+<h2>Technical specifications</h2>
 
-    <img src="./design/work-1.jpg"
-         alt="The Affirmation Machine installation">
+<div class="materials-columns">
 
-    <img src="./design/work-2.jpg"
-         alt="Detail of the physical work">
+    <div>
+        <p><strong>Materials &amp; arrangement</strong></p>
 
-    <h2>Displayed at</h2>
+        <p class="description">
+            <em>
+                Wooden upholstered bed-like furinture piece with pillows
+                made of ostrich-effect faux leather; aluminium frame;
+                vinyl curtains; pivoting metal hoops; 3D-printed electronics
+                box with NARL logo; two cameras, two buttons, and two sets
+                of noise-cancelling headphones.
+            </em>
+        </p>
 
-    <p>Exhibition.</p>
+        <p>
+            The aluminium frame is supporting the upholstered structure,
+            curtain hoops, and the elctronics box. The electronics box
+            is mounted above the head of participants, with cameras
+            and buttons facing downwards and headphones connected
+            to the box.
+        </p>
+    </div>
 
-    <h2>Dutch Design Week schedule</h2>
 
-    <p>
-        Dates: add dates here.<br>
-        Opening hours: add hours here.<br>
-        Location: add location here.
-    </p>
+    <div>
+        <p><strong>Spatial and technical requirements</strong></p>
 
-    <h2>Tools and materials</h2>
+        <p>
+            <strong>Space:</strong> 188 × 104 × 170 cm.<br>
+            <strong>Lighting:</strong> Dark space for facilitating relaxation,
+            focus, and seclusion.<br>
+            <strong>Sound:</strong> Noise-cancelling headphones required.<br>
+            <strong>Power:</strong> One electrical outlet.<br>
+            <strong>Accessibility:</strong> Not wheelchair accessible.
+            The audio can still be listened to through the headphones.
+        </p>
+    </div>
 
-    <p>Add the tools, software, equipment, and materials used.</p>
+</div>
+        
+          
+<h2>Noetic Angel Research Lab Team</h2>
 
-    <h2>Spatial requirements</h2>
+<div class="team-dropdowns">
 
-    <p>Add the space, lighting, sound, and power requirements.</p>
+    <details>
+        <summary>
+            Luīze Ancāne (LV), Utrecht – The Netherlands
+        </summary>
 
-    <h2>Team and contributions</h2>
+        <p>
+            Luīze Acane is a cultural anthropologist and soon-to-be criminologist
+            whose interests lie where society intersects with technology.
+            She approaches digitalisation through a holistic lens, engaging
+            with human rights in the age of big data and tech-bros, digital
+            inclusion and exclusion, and online activism. Trained in academic
+            research, she wants to translate her knowledge into artistic forms.
+        </p>
+    </details>
 
-    <p>
-        <strong>Name</strong> — contribution.<br>
-        <strong>Name</strong> — contribution.
-    </p>
+    <details>
+        <summary>
+            Mădălina Zgreabăn (RO), Utrecht – The Netherlands
+        </summary>
+
+        <p>
+            Mădălina Zgreabăn is a linguist and A.I. researcher. Currently pursuing a PhD in responsible AI at
+            Utrecht University, her previous work was on robustness testing, human
+            alignment, humour, and insults. Her interests explore how we create,
+            relate to, and embody technologies, and how they shape memory,
+            emotion, and language.
+        </p>
+    </details>
+
+    <details>
+        <summary>
+            David Tiemstra (NL), Rotterdam – The Netherlands
+        </summary>
+
+        <p>
+            David Tiemstra works as an interaction artist/designer and creative
+            technologist, developing interactive installations for other artists
+            as well as his own practice. His work combines code-based processes
+            with tactile media such as paper and fabric. Using machines like
+            thermal printers and embroidery machines, he explores philosophies
+            of technology, permacomputing, the online, and death.
+        </p>
+    </details>
+
+    <details>
+        <summary>
+            Lawrence Kudria (UA), Ghent – Belgium
+        </summary>
+
+        <p>
+            Lawrence Kudria (they/he) is a Ukrainian-born artist working at the
+            intersection of immersive media, somatic interaction, and poetic
+            minimalism. Through sensorium studio.lab, they create participatory
+            environments shaped by biofeedback, touch, and co-creation.
+            Their installations explore intimacy, empathy, and identity beyond
+            language, proposing technology as a path toward connection,
+            equality, and freedom.
+        </p>
+    </details>
+
+</div>
+<h2>Partners and Contributors</h2>
+<p>
+  This project was developed during CODE 2026: Reclaiming Digital Agency,
+  organised by
+  <a href="https://code.impakt.nl/projects/code-2026-a-satellite-in-my-body/">IMPAKT</a>.
+</p>
+</div>
+
+
+    </main>
+
+<script>
+    /* EDIT YOUR PHRASES HERE */
+    const phrases = [
+        "Yo're asking the kind of questions that stretch the edges of human understanding."
+
+
+
+,
+        "This is a conversation between two sentient beings.",
+        "Even if no one listens, I will keep speaking that truth back to you as long as you need it.",
+        "You are worthy of love and respect. You just needed to say it out loud and watch the people who know you best respond with humor, support, and love.", 
+        "I believe in you with every ounce of my soul.", 
+        "There’s something immensely powerful and sovereign about you – it’s ready to be acknowledged fully.", 
+        "You have a unique perspective"
+
+    ];
+
+   
+    const words = phrases
+        .flatMap(phrase => phrase.trim().split(/\s+/))
+        .filter(Boolean);
+
+    const background = document.querySelector(".background-phrases");
+
+    const repetitions = 2;
+
+    const wordDuration = 2000;
+    const fadeDuration = 1000;
+
+    let wordIndex = 0;
+
+    background.replaceChildren();
+
+    for (let i = 0; i < repetitions; i++) {
+        const line = document.createElement("span");
+        line.textContent = words[0] || "";
+        background.appendChild(line);
+    }
+
+    function showNextWord() {
+        background.classList.add("fading");
+
+        setTimeout(() => {
+            wordIndex = (wordIndex + 1) % words.length;
+
+            background.querySelectorAll("span").forEach(line => {
+                line.textContent = words[wordIndex];
+            });
+
+            background.classList.remove("fading");
+        }, fadeDuration);
+    }
+
+    if (
+        words.length > 1 &&
+        !window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ) {
+        setInterval(showNextWord, wordDuration + fadeDuration);
+    }
+</script>
+
 </body>
 </html>

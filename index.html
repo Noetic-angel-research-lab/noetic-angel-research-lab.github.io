@@ -1,336 +1,181 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Affirmation Machine</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Affirmation Machine</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:black;color:white;font-family:"Neue Haas Grotesk",serif;cursor:url('./design/cursor.png') 16 16,auto}
+.about{position:fixed;top:0;left:0;z-index:5;display:flex;align-items:center;gap:12px;width:190px;color:white;text-decoration:none;animation:floatAcross 35s linear infinite}.about img{width:44px;height:44px;object-fit:contain}
+@keyframes floatAcross{0%,100%{transform:translate(20px,20px)}25%{transform:translate(calc(100vw - 210px),calc(35svh - 22px))}50%{transform:translate(calc(50vw - 95px),calc(100svh - 64px))}75%{transform:translate(20px,50svh)}}
+.about:hover,.about:focus-within{animation-play-state:paused}
+.stage{height:100svh;padding:100px 20px 40px;overflow:hidden;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:24px;visibility:hidden}.stage.ready{visibility:visible}.instruction{margin:0;font-size:22px;text-align:center}.desktop{display:none}.machine{position:relative;flex-shrink:0;width:100%;max-width:550px}.size{display:block;width:100%;visibility:hidden}.half{position:absolute;left:0;width:100%;height:50%;overflow:hidden;pointer-events:none;z-index:2;transition:transform .4s,opacity .4s}.upper{top:0}.lower{bottom:0}.half img{position:absolute;left:0;width:100%;height:200%}.upper img{top:0}.lower img{bottom:0}.choices{position:absolute;inset:0;display:flex;justify-content:center;align-items:center;gap:16px;visibility:hidden}
+.choices button {
+    background: #f0dfe5;       /* Background colour */
+    color: #33292e;            /* Text colour */
+    border: 1px solid #bba8b0; /* Border thickness, style and colour */
+    border-radius: 999px;      /* Rounded corners; use 0 for square corners */
+    padding: 10px 20px;        /* Space inside: top/bottom, then left/right */
+    min-width: 30px;          /* Minimum button width */
+    font-family: inherit;     /* Typeface: follows the page font */
+    font-size: 11px;           /* Text size */
+    font-weight: 400;          /* Text weight; 700 is bold */
+    cursor: inherit;
+    transition: background .2s, border-color .2s;
+}
 
-    <style>
-        * {
-            box-sizing: border-box;
-        }
+.choices button:hover,
+.choices button:focus-visible {
+    background: #ffffff;
+    border-color: #ffffff;
+}
+.machine.open .upper,.machine:focus-within .upper{transform:translateY(-90px)}.machine.open .lower,.machine:focus-within .lower{transform:translateY(90px)}.machine.open .choices,.machine:focus-within .choices{visibility:visible}
+@media(hover:hover) and (pointer:fine){.desktop{display:inline}.touch{display:none}.machine:hover .upper{transform:translateY(-90px)}.machine:hover .lower{transform:translateY(90px)}.machine:hover .choices{visibility:visible}}
+.machine.playing .experience-text {
+    display: none;
+}
 
-        body {
-            margin: 0;
-            background: black;
-            color: white;
-            font-family: Georgia, serif;
-            cursor: url("./design/cursor.png") 16 16, auto;
-        }
 
-        .about {
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 5;
+.machine.playing .reveal-content {
+    justify-content: center;
+}
 
+.machine.playing .choices {
+    visibility: visible;
+}@media(prefers-reduced-motion:reduce){.about{animation:none;top:20px;left:20px}.half,.machine.playing .half{transition:none}}
+
+
+.gallery-link {position:fixed;top:0;left:0;z-index:10;display:flex;align-items:center;gap:10px;width:140px;color:inherit;text-decoration:none;animation:galleryFloat 35s linear infinite}
+.gallery-link img {width:44px;height:44px;margin:0;object-fit:contain}
+.gallery-link:hover,.gallery-link:focus {animation-play-state:paused}
+@keyframes galleryFloat {0%,100%{transform:translate(calc(100vw - 160px),20px)}33%{transform:translate(20px,65vh)}66%{transform:translate(calc(100vw - 160px),80vh)}}
+@media(prefers-reduced-motion:reduce){.gallery-link{animation:none;left:auto;right:20px;top:20px}}
+
+/* lol comments are funny*/
+.about, .gallery-link, .policy-link, .contact-link {
+    position:fixed; top:0; left:0; z-index:10;
+    display:flex; align-items:center; gap:6px;
+    width:130px; min-height:32px; padding:4px;
+    font-size:11px; line-height:1.2; color:inherit; text-decoration:none;
+    animation:smallFloat 42s linear infinite;
+}
+.about img, .gallery-link img, .policy-link img, .contact-link img {
+    display:block; width:30px; height:50px; margin:0; object-fit:contain;
+}
+.gallery-link {animation-delay:-10.5s}
+.policy-link {animation-delay:-21s}
+.contact-link {animation-delay:-31.5s}
+.about:hover, .gallery-link:hover, .policy-link:hover, .contact-link:hover,
+.about:focus, .gallery-link:focus, .policy-link:focus, .contact-link:focus {animation-play-state:paused}
+@keyframes smallFloat {
+    0%,100% {transform:translate(12px,12px)}
+    25% {transform:translate(calc(100vw - 150px),25svh)}
+    50% {transform:translate(calc(60vw - 80px),calc(100svh - 52px))}
+    75% {transform:translate(12px,65svh)}
+}
+@media(prefers-reduced-motion:reduce){
+    .about,.gallery-link,.policy-link,.contact-link {animation:none;transform:none;left:auto;right:12px}
+    .about{top:12px}.gallery-link{top:48px}.policy-link{top:84px}.contact-link{top:120px}
+}
+
+.reveal-content {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
     display: flex;
-    align-items: center;
-    gap: 12px;
-    width: 190px;
-
-    color: white;
-    text-decoration: none;
-
-    animation: floatAcross 35s linear infinite;
+    flex-direction: column;
+    justify-content: center;
+    gap: 16px;
+    padding: 16px;
+    overflow-y: auto;         
+    visibility: hidden;
+}
+.experience-text {
+    font-size: 11px;          
+    line-height: 1;           
+}
+.experience-text p { margin: 0 0 16px; }
+.experience-text p:last-child { margin-bottom: 0; }
+.reveal-content .choices {
+    position: static;
+    flex-shrink: 0;
+}
+.machine.open .reveal-content,
+.machine:focus-within .reveal-content,
+.machine.playing .reveal-content { visibility: visible; }
+@media(hover:hover) and (pointer:fine){
+    .machine:hover .reveal-content { visibility: visible; }
+}
+.machine.open .upper,
+.machine:focus-within .upper {
+    transform: translateY(-120px); 
 }
 
-.about img {
-    width: 44px;
-    height: 44px;
-    object-fit: contain;
+.machine.open .lower,
+.machine:focus-within .lower {
+    transform: translateY(120px); 
 }
 
-@keyframes floatAcross {
-    0%, 100% {
-        transform: translate(20px, 20px);
+@media (hover:hover) and (pointer:fine) {
+    .machine:hover .upper {
+        transform: translateY(-120px);
     }
 
-    25% {
-        transform: translate(
-            calc(100vw - 210px),
-            calc(35svh - 22px)
-        );
-    }
-
-    50% {
-        transform: translate(
-            calc(50vw - 95px),
-            calc(100svh - 64px)
-        );
-    }
-
-    75% {
-        transform: translate(20px, 50svh);
+    .machine:hover .lower {
+        transform: translateY(120px);
     }
 }
+.machine.playing .upper {transform:translateY(-110svh)}
+.machine.playing .lower {transform:translateY(110svh)}
 
-.about:hover,
-.about:focus-within {
-    animation-play-state: paused;
-}
+</style>
 
-        .stage {
-            height: 100svh;
-            padding: 100px 20px 40px;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            gap: 24px;
-            visibility: hidden;
-        }
 
-        .stage.ready {
-            visibility: visible;
-        }
-
-        .instruction {
-            margin: 0;
-            font-size: 22px;
-            text-align: center;
-        }
-
-        .desktop {
-            display: none;
-        }
-
-        .machine {
-            position: relative;
-            flex-shrink: 0;
-            width: 100%;
-            max-width: 550px;
-        }
-
-        .size {
-            display: block;
-            width: 100%;
-            visibility: hidden;
-        }
-
-        .half {
-            position: absolute;
-            left: 0;
-            width: 100%;
-            height: 50%;
-            overflow: hidden;
-            pointer-events: none;
-            z-index: 2;
-            transition: transform 0.4s, opacity 0.4s;
-        }
-
-        .upper {
-            top: 0;
-        }
-
-        .lower {
-            bottom: 0;
-        }
-
-        .half img {
-            position: absolute;
-            left: 0;
-            width: 100%;
-            height: 200%;
-        }
-
-        .upper img {
-            top: 0;
-        }
-
-        .lower img {
-            bottom: 0;
-        }
-
-        .choices {
-            position: absolute;
-            inset: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 16px;
-            visibility: hidden;
-        }
-
-        button {
-            border: none;
-            padding: 15px 20px;
-            background: white;
-            color: black;
-            font: inherit;
-            cursor: inherit;
-        }
-
-        .machine.open .upper,
-        .machine:focus-within .upper {
-            transform: translateY(-90px);
-        }
-
-        .machine.open .lower,
-        .machine:focus-within .lower {
-            transform: translateY(90px);
-        }
-
-        .machine.open .choices,
-        .machine:focus-within .choices {
-            visibility: visible;
-        }
-
-        @media (hover: hover) and (pointer: fine) {
-            .desktop {
-                display: inline;
-            }
-
-            .touch {
-                display: none;
-            }
-
-            .machine:hover .upper {
-                transform: translateY(-90px);
-            }
-
-            .machine:hover .lower {
-                transform: translateY(90px);
-            }
-
-            .machine:hover .choices {
-                visibility: visible;
-            }
-        }
-
-        .machine.playing .half {
-            opacity: 0;
-            transition: transform 2s, opacity 2s;
-        }
-
-        .machine.playing .upper {
-            transform: translateY(-110svh);
-        }
-
-        .machine.playing .lower {
-            transform: translateY(110svh);
-        }
-
-        .machine.playing .choices {
-            visibility: visible;
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-    .about {
-        animation: none;
-        top: 20px;
-        left: 20px;
-    }
-
-    .half,
-    .machine.playing .half {
-        transition: none;
-    }
-}
-    </style>
 </head>
-
 <body>
-    <a class="about" href="./about.html">
-        <img src="./design/logo_cursor.svg" alt="">
-        <span>Get to know more</span>
-    </a>
+<a class="policy-link" href="./policy.html"><img src="./design/logo_cursor_in.svg" alt=""><span>Policy</span></a>
 
-    <div class="stage" id="stage">
-        <p class="instruction" id="instruction">
-            <span class="desktop">Hover over to get affirmed.</span>
-            <span class="touch">Tap to get affirmed.</span>
-        </p>
+<a class="contact-link" href="./contact.html"><img src="./design/logo_cursor_in.svg" alt=""><span>Contact</span></a>
 
-        <main class="machine" id="machine" tabindex="0"
-              aria-label="Reveal audio choices">
+<a class="gallery-link" href="./gallery.html"><img src="./design/logo_cursor_in.svg" alt=""><span>Pictures</span></a>
 
-            <img class="size" id="cover"
-                 src="./design/cover.png" alt="">
+<a class="about" href="./about.html"><img src="./design/logo_cursor_in.svg" alt=""><span>More</span></a>
+<div class="stage" id="stage">
+<p class="instruction" id="instruction"><span class="desktop">Hover over to get affirmed.</span><span class="touch">Tap to get affirmed.</span></p>
+<main class="machine" id="machine" tabindex="0" aria-label="Reveal audio choices">
+<img class="size" id="cover" src="./design/cover_iiii.svg" alt="">
+<div class="reveal-content">
+<section class="experience-text" aria-label="About the experience">
+<p>Find another person, lie down, relax, &  get comfortable. This is a space to tap into your true self, put on your heaphones and choose your truth  to be guided through a journey of self-discovery.</p>
+<p>The Affirmation Machine uses the novel Convulsioencephalography (CEG) technique, an AI-driven approach, to map out truths about you by measuring small muscle contractions in the face and neck to create personalized affirmations.</p>
+<p>When the experience ends, we recommend you talk through your discoveries together.</p>
+</section>
+<div class="choices"><button type="button" onclick="playAudio('audio1')">Truth 1</button><button type="button" onclick="playAudio('audio2')">Truth 2</button></div>
+</div>
+<div class="half upper" aria-hidden="true"><img src="./design/cover_iiii.svg" alt=""></div>
+<div class="half lower" aria-hidden="true"><img src="./design/cover_iiii.svg" alt=""></div>
+</main></div>
 
-            <div class="choices">
-                <button type="button" onclick="playAudio('audio1')">
-                    Truth 1
-                </button>
+<audio id="audio1" src="./audio/final_delulu_track.wav" preload="none"></audio><audio id="audio2" src="./audio/final_neutral_track.wav" preload="none"></audio>
+<script>
+const stage=document.getElementById('stage'),machine=document.getElementById('machine'),cover=document.getElementById('cover'),instruction=document.getElementById('instruction');
+function fitImage(){const ratio=cover.naturalWidth/cover.naturalHeight;const height=Math.max(1,stage.clientHeight-instruction.offsetHeight-164);machine.style.width=Math.min(550,stage.clientWidth-40,height*ratio)+'px'}
+async function showWebsite(){try{await Promise.all(Array.from(machine.querySelectorAll('img'),image=>image.decode()));fitImage();stage.classList.add('ready')}catch{instruction.textContent='The cover image could not load.';stage.classList.add('ready')}}
+machine.addEventListener('click',()=>machine.classList.add('open'));
 
-                <button type="button" onclick="playAudio('audio2')">
-                    Truth 2
-                </button>
-            </div>
-
-            <div class="half upper" aria-hidden="true">
-                <img src="./design/cover.png" alt="">
-            </div>
-
-            <div class="half lower" aria-hidden="true">
-                <img src="./design/cover.png" alt="">
-            </div>
-        </main>
-    </div>
-
-    <audio id="audio1" src="./audio1.mp3" preload="none"></audio>
-    <audio id="audio2" src="./audio2.mp3" preload="none"></audio>
-
-    <script>
-        const stage = document.getElementById("stage");
-        const machine = document.getElementById("machine");
-        const cover = document.getElementById("cover");
-        const instruction = document.getElementById("instruction");
-
-        function fitImage() {
-            const ratio = cover.naturalWidth / cover.naturalHeight;
-            const height = Math.max(
-                1,
-                stage.clientHeight - instruction.offsetHeight - 164
-            );
-
-            machine.style.width =
-                Math.min(550, stage.clientWidth - 40, height * ratio) + "px";
-        }
-
-        async function showWebsite() {
-            try {
-                await Promise.all(
-                    Array.from(
-                        machine.querySelectorAll("img"),
-                        image => image.decode()
-                    )
-                );
-
-                fitImage();
-                stage.classList.add("ready");
-            } catch {
-                instruction.textContent = "The cover image could not load.";
-                stage.classList.add("ready");
-            }
-        }
-
-        machine.addEventListener("click", () => {
-            machine.classList.add("open");
-        });
-
-        async function playAudio(id) {
-            document.querySelectorAll("audio").forEach(audio => {
-                audio.pause();
-                audio.currentTime = 0;
-            });
-
-            try {
-                await document.getElementById(id).play();
-                machine.classList.add("playing");
-                instruction.style.visibility = "hidden";
-            } catch {
-                instruction.textContent = "The audio could not play.";
-                instruction.style.visibility = "visible";
-            }
-        }
-
-        window.addEventListener("resize", () => {
-            if (cover.naturalWidth) fitImage();
-        });
-
-        showWebsite();
-    </script>
-</body>
-</html>
+let cameraPermissionRequested = false;
+async function requestCameraAccess(){
+    if(cameraPermissionRequested) return;
+    cameraPermissionRequested = true;
+    if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return;
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({video:true,audio:false});
+        stream.getTracks().forEach(track => track.stop());
+    } catch {
+        // Continue the audio experience if permission is denied or unavailable.
+    }
+}
+async function playAudio(id){await requestCameraAccess();document.querySelectorAll('audio').forEach(audio=>{audio.pause();audio.currentTime=0});try{await document.getElementById(id).play();machine.classList.add('playing');instruction.style.visibility='hidden'}catch{instruction.textContent='The audio could not play.';instruction.style.visibility='visible'}}
+window.addEventListener('resize',()=>{if(cover.naturalWidth)fitImage()});showWebsite();
+</script>
+</body></html>
